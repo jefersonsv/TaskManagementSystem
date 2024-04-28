@@ -9,6 +9,10 @@ namespace TMS.Infrastructure.Database
 
         public SqlContext(DbContextOptions<SqlContext> options) : base(options)
         {
+            if (GetEnvironment.Guard.IsDevelopment())
+            {
+                base.Database.Migrate(); // Is is here only for challenge purpose. Run migrations is no recommended without supervision
+            }
         }
     }
 }

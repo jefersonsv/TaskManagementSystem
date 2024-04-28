@@ -1,12 +1,13 @@
-﻿using TMS.Domain.Entities;
+﻿using System;
+using TMS.Domain.Entities;
 
-namespace TMS.Presentation.Models
+namespace TMS.Domain.Models
 {
-    public class TaskItemCreate
+    public class TaskItemCreateRequest
     {
+        public string? Title { get; set; }
         public string? Description { get; set; }
         public DateTime? Date { get; set; }
         public Priority? Priority { get; set; }
-        public Status? Status { get; set; }
     }
 }

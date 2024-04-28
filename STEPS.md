@@ -59,6 +59,7 @@ dotnet new classlib -n TMS.Domain
 dotnet new classlib -n TMS.Application
 dotnet new classlib -n TMS.Infrastructure
 dotnet new webapi -n TMS.Presentation --use-controllers
+dotnet sln MySolution.sln set-startup-project MyProject
 ```
 
 Add the projects to solution
@@ -104,6 +105,10 @@ dotnet add .\TMS.Infrastructure\TMS.Infrastructure.csproj package Microsoft.Exte
 
 ```sh
 dotnet add .\TMS.Presentation\TMS.Presentation.csproj package Microsoft.EntityFrameworkCore.Design
+dotnet add .\TMS.Presentation\TMS.Presentation.csproj package Serilog
+dotnet add .\TMS.Presentation\TMS.Presentation.csproj package Serilog.Sinks.File
+dotnet add .\TMS.Presentation\TMS.Presentation.csproj package Serilog.Extensions.Logging
+dotnet add .\TMS.Presentation\TMS.Presentation.csproj package Serilog.AspNetCore
 ```
 
 ### Install application references
@@ -126,6 +131,7 @@ dotnet ef migrations add InitialCreate --project .\TMS.Infrastructure\TMS.Infras
 dotnet add .\TMS.Application\TMS.Presentation.csproj reference .\TMS.Domain\TMS.Domain.csproj
 ```
 
-```
+## Manual Visual Studio tasks
 
-```
+1. Add the startup project
+2. Accept to create and use local SSL

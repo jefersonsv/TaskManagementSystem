@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using TMS.Application.Services;
 using TMS.Domain.Entities;
-using TMS.Presentation.Models;
 
 namespace TMS.Presentation.Controllers;
 
@@ -22,11 +21,10 @@ public class TaskController : ControllerBase
     [ProducesResponseType<IEnumerable<TaskItem>>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult Get()
+    public async Task<ActionResult> Get()
     {
-        //var res = _taskService.RetrieveAllTasks();
-        throw new Exception();
-        //return Ok(res);
+        var res = await _taskService.RetrieveAllTasks();
+        return Ok(res);
     }
 
     [HttpGet("{id}")]
@@ -34,16 +32,15 @@ public class TaskController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult Get(int id)
+    public async Task<ActionResult> Get(int id)
     {
-        if (id < 10)
+        var res = await _taskService.GetTask(id);
+        if (res.IsError)
         {
-            return Ok(new TaskItem());
+            return BadRequest(res.Errors);
         }
-        else
-        {
-            return Problem(detail: Constants.Messages.TaskNotFound, statusCode: 404);
-        }
+
+        return Ok(res.Value);
     }
 
     [HttpPost()]
@@ -51,10 +48,15 @@ public class TaskController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult Post([FromBody] TaskItemCreate taskItemCreate)
+    public async Task<ActionResult> Post([FromBody] Domain.Models.TaskItemCreateRequest taskItemCreateRequest)
     {
-        var taskItem = new TaskItem();
-        return CreatedAtAction(nameof(TaskItem), new { id = 1 });
+        var res = await _taskService.CreateTask(taskItemCreateRequest);
+        if (res.IsError)
+        {
+            return BadRequest(res.Errors);
+        }
+
+        return Ok(res.Value);
     }
 
     [HttpPut("{id}")]
@@ -62,9 +64,9 @@ public class TaskController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult Put([FromBody] TaskItemCreate taskItemCreate, int id)
+    public async Task<ActionResult> Put([FromBody] Domain.Models.TaskItemUpdateRequest taskItemCreate, int id)
     {
-        var taskItem = new TaskItem();
+        await _taskService.UpdateTask(taskItemCreate, id);
         return Ok();
     }
 
