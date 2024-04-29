@@ -11,7 +11,7 @@ const fetcher = (url: string) => axios.get<any>(url).then((res) => res.data);
 
 export default function Progress() {
   const { data, error, isLoading } = useSWR<TaskProgress[], AxiosError>(
-    `http://localhost:5234/api/tasks/progress`,
+    `/api/tasks/progress`,
     fetcher
   );
 

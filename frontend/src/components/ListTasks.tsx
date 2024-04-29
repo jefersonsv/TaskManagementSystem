@@ -17,18 +17,25 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { priorityToString, statusToString } from "@/lib/convert";
+import { EPriority } from "@/types/EPriority";
+import { EStatus } from "@/types/EStatus";
 import { IDeleteTask } from "@/types/IDeleteTask";
 import { ITaskItem } from "@/types/ITaskItem";
 import axios from "axios";
+import { format } from "date-fns";
 import { useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { toast } from "sonner";
+import PriorityDropdown from "./PriorityDropdown";
 import Progress from "./Progress";
+import StatusDropdown from "./StatusDropdown";
 import { Button } from "./ui/button";
 
 export default function ListTasks() {
   const [deleteTask, setDeleteTask] = useState<IDeleteTask | undefined>();
   const [page, setPage] = useState(1);
+  const [status, setStatus] = useState<string>("");
+  const [priority, setPriority] = useState<string>("");
   const [data, setData] = useState<ITaskItem[]>([]);
   const [hasMore, setHasMore] = useState(true);
 
@@ -39,16 +46,37 @@ export default function ListTasks() {
 
   const fetchMoreData = () => {
     if (hasMore) {
-      axios.get(`http://localhost:5234/api/tasks?page=${page}`).then((res) => {
-        if (res.data.length) {
-          setData([...data, ...res.data]);
-          setPage(page + 1);
-        } else {
+      axios
+        .get(
+          `/api/tasks?page=${page}&status=${EStatus[status as any]}&priority=${
+            EPriority[priority as any]
+          }`
+        )
+        .then((res) => {
+          if (res.data.length) {
+            setData([...data, ...res.data]);
+            setPage(page + 1);
+          } else {
+            setHasMore(false);
+          }
+        });
+    }
+  };
+
+  useEffect(() => {
+    axios
+      .get(
+        `/api/tasks?page=1&status=${EStatus[status as any]}&priority=${
+          EPriority[priority as any]
+        }`
+      )
+      .then((res) => {
+        setData([...res.data]);
+        if (!res.data.length) {
           setHasMore(false);
         }
       });
-    }
-  };
+  }, [status, priority]);
 
   function handleDelete(item: ITaskItem) {
     setDeleteTask({
@@ -59,7 +87,7 @@ export default function ListTasks() {
   }
 
   function performDelete(del: IDeleteTask) {
-    axios.delete(`http://localhost:5234/api/tasks/${del.id}`).then((res) => {
+    axios.delete(`/api/tasks/${del.id}`).then((res) => {
       if (res.status === 204) {
         toast(`Task ${del.title} deleted`);
         const newData = data.filter((s) => s.id !== del.id);
@@ -72,6 +100,18 @@ export default function ListTasks() {
     });
   }
 
+  function handleStatus(status: string) {
+    setPage(1);
+    setStatus(status);
+    setHasMore(true);
+  }
+
+  function handlePriority(priority: string) {
+    setPage(1);
+    setPriority(priority);
+    setHasMore(true);
+  }
+
   return (
     <div>
       <h2 className="scroll-m-20 text-3xl font-extrabold tracking-tight lg:text-4xl mb-4">
@@ -80,6 +120,17 @@ export default function ListTasks() {
 
       <div>
         <Progress />
+      </div>
+
+      <div className="flex my-4 space-x-4">
+        <div className="w-1/2 flex items-center space-x-2">
+          <div>Status: </div>
+          <StatusDropdown onChange={handleStatus} firstEmpty={true} />
+        </div>
+        <div className="w-1/2 flex items-center space-x-2">
+          <div>Priority: </div>
+          <PriorityDropdown onChange={handlePriority} />
+        </div>
       </div>
 
       <InfiniteScroll
@@ -104,6 +155,11 @@ export default function ListTasks() {
                 <div className="flex space-x-2">
                   <div>Priority:</div>
                   <div>{priorityToString(s.priority)}</div>
+                </div>
+
+                <div className="flex space-x-2">
+                  <div>Date:</div>
+                  <div>{format(s.date, "dd/MM/yyyy")}</div>
                 </div>
               </CardContent>
               <CardFooter>

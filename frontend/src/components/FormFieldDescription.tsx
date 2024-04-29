@@ -8,16 +8,16 @@ import {
 import { Input } from "@/components/ui/input";
 import { TFormControl } from "@/types/TFormControl";
 
-export function FormFieldTitle({ control }: { control: TFormControl }) {
+export function FormFieldDescription({ control }: { control: TFormControl }) {
   return (
     <FormField
       control={control}
-      name="title"
+      name="description"
       render={({ field }) => (
         <FormItem>
-          <FormLabel>Title</FormLabel>
+          <FormLabel>Description</FormLabel>
           <FormControl>
-            <Input placeholder="Type the title" {...field} />
+            <Input placeholder="Type the description" {...field} />
           </FormControl>
           <FormMessage />
         </FormItem>

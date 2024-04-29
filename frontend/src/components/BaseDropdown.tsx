@@ -6,7 +6,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { IKeyValue } from "@/types/IKeyValue";
-import { FormControl } from "./ui/form";
 
 export default function BaseDropdown({
   placeholder,
@@ -21,11 +20,9 @@ export default function BaseDropdown({
 }) {
   return (
     <Select onValueChange={onChange} defaultValue={value}>
-      <FormControl>
-        <SelectTrigger>
-          <SelectValue placeholder={placeholder} />
-        </SelectTrigger>
-      </FormControl>
+      <SelectTrigger>
+        <SelectValue placeholder={placeholder} />
+      </SelectTrigger>
       <SelectContent>
         {items.map((item) => (
           <SelectItem key={item.key} value={item.value}>

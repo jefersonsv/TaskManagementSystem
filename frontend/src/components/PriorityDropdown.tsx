@@ -8,7 +8,7 @@ export default function PriorityDropdown({
 }: {
   placeholder?: string;
   onChange: any;
-  value: any;
+  value?: any;
 }) {
   const items: IKeyValue[] = [
     { key: 1, value: "Low" },

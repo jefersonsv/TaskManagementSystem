@@ -5,10 +5,12 @@ export default function StatusDropdown({
   placeholder,
   onChange,
   value,
+  firstEmpty = false,
 }: {
+  firstEmpty?: boolean;
   placeholder?: string;
   onChange: any;
-  value: any;
+  value?: any;
 }) {
   const items: IKeyValue[] = [
     { key: 1, value: "Pending" },
@@ -16,6 +18,8 @@ export default function StatusDropdown({
     { key: 3, value: "Completed" },
     { key: 4, value: "Archived" },
   ];
+
+  if (firstEmpty) items.unshift({ key: 0, value: "All Status" });
 
   return (
     <BaseDropdown

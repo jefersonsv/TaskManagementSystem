@@ -1,43 +1,20 @@
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
+import { Form } from "@/components/ui/form";
 import { EPriority } from "@/types/EPriority";
 import { EStatus } from "@/types/EStatus";
 import { formSchema } from "@/types/FormSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import { FormFieldDate } from "./FormFieldDate";
+import { FormFieldDescription } from "./FormFieldDescription";
+import { FormFieldPriority } from "./FormFieldPriority";
+import { FormFieldStatus } from "./FormFieldStatus";
 import { FormFieldTitle } from "./FormFieldTitle";
-import PriorityDropdown from "./PriorityDropdown";
-import StatusDropdown from "./StatusDropdown";
+import { PopupHighPriority } from "./PopupHighPriority";
 import { Button } from "./ui/button";
 
 export default function NewTask() {
@@ -53,17 +30,17 @@ export default function NewTask() {
     },
   });
 
-  type FormType2 = typeof form.control;
-
   async function createTask() {
     const values = form.getValues();
     const obj = {
-      ...values,
+      title: values.title,
+      description: values.description,
+      date: format(values.date, "yyyy-MM-dd"),
       priority: parseInt(EPriority[values.priority as any]),
       status: parseInt(EStatus[values.status as any]),
     };
 
-    const res = await axios.post("http://localhost:5234/api/tasks", {
+    const res = await axios.post("/api/tasks", {
       ...obj,
     });
 
@@ -95,118 +72,26 @@ export default function NewTask() {
       <div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <FormFieldTitle form={form} />
+            <FormFieldTitle control={form.control} />
 
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Type the description" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <FormFieldDescription control={form.control} />
 
-            <FormField
-              control={form.control}
-              name="date"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Date</FormLabel>
-                  <br />
-                  <FormControl>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant={"outline"}
-                          className={cn(
-                            "w-[240px] pl-3 text-left font-normal",
-                            !field.value && "text-muted-foreground"
-                          )}
-                        >
-                          {field.value ? (
-                            format(field.value, "PPP")
-                          ) : (
-                            <span>Pick a date</span>
-                          )}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0">
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          initialFocus
-                          {...field}
-                        />
-                      </PopoverContent>
-                    </Popover>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <FormFieldDate control={form.control} />
 
-            <FormField
-              control={form.control}
-              name="status"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Status</FormLabel>
-                  <StatusDropdown
-                    placeholder="Select the status"
-                    onChange={field.onChange}
-                    value={field.value}
-                  />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <FormFieldStatus control={form.control} />
 
-            <FormField
-              control={form.control}
-              name="priority"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Priority</FormLabel>
-                  <PriorityDropdown
-                    placeholder="Select the priority"
-                    onChange={field.onChange}
-                    value={field.value}
-                  />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <FormFieldPriority control={form.control} />
 
             <Button type="submit">Create</Button>
           </form>
         </Form>
       </div>
 
-      <AlertDialog open={showConfirm}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>High Priority Task</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure to create high priority task?
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setShowConfirm(false)}>
-              Cancel
-            </AlertDialogCancel>
-            <AlertDialogAction onClick={() => createTask()}>
-              Continue
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <PopupHighPriority
+        showConfirm={showConfirm}
+        onCancel={() => setShowConfirm(false)}
+        onConfirm={() => createTask()}
+      />
     </>
   );
 }
