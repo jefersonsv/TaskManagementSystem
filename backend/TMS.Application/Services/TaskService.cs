@@ -17,9 +17,9 @@ namespace TMS.Application.Services
             _criticalUpdateService = criticalUpdateService;
         }
 
-        public async Task<ErrorOr<int>> CreateTask(TaskItemCreateRequest taskItemCreateRequest)
+        public async Task<ErrorOr<int>> CreateTask(TaskItemCreateUpdateRequest taskItemCreateRequest)
         {
-            var validator = new TaskItemCreateRequestValidator();
+            var validator = new TaskItemCreateUpdateRequestValidator();
             var validationResult = validator.Validate(taskItemCreateRequest);
 
             if (!validationResult.IsValid)
@@ -28,8 +28,6 @@ namespace TMS.Application.Services
             }
 
             var taskItem = taskItemCreateRequest.Adapt<TaskItem>();
-            taskItem.Status = Status.Pending;
-
             await _taskItemRepository.Insert(taskItem);
 
             if (taskItem.Priority == Priority.High)
@@ -90,10 +88,10 @@ namespace TMS.Application.Services
 
         public async Task<TaskProgress[]> GetProgress() => await _taskItemRepository.GetProgress();
 
-        public async Task<ErrorOr<bool>> UpdateTask(TaskItemUpdateRequest taskItemUpdateRequest, int id)
+        public async Task<ErrorOr<bool>> UpdateTask(TaskItemCreateUpdateRequest taskItemCreateUpdateRequest, int id)
         {
-            var validator = new TaskItemUpdateRequestValidator();
-            var validationResult = validator.Validate(taskItemUpdateRequest);
+            var validator = new TaskItemCreateUpdateRequestValidator();
+            var validationResult = validator.Validate(taskItemCreateUpdateRequest);
 
             if (!validationResult.IsValid)
             {
@@ -106,11 +104,11 @@ namespace TMS.Application.Services
                 return Error.NotFound(description: Domain.Constants.Messages.TaskNotFound);
             }
 
-            doc.Status = taskItemUpdateRequest.Status;
-            doc.Date = taskItemUpdateRequest.Date;
-            doc.Description = taskItemUpdateRequest.Description;
-            doc.Priority = taskItemUpdateRequest.Priority;
-            doc.Title = taskItemUpdateRequest.Title;
+            doc.Status = taskItemCreateUpdateRequest.Status;
+            doc.Date = taskItemCreateUpdateRequest.Date;
+            doc.Description = taskItemCreateUpdateRequest.Description;
+            doc.Priority = taskItemCreateUpdateRequest.Priority;
+            doc.Title = taskItemCreateUpdateRequest.Title;
 
             await _taskItemRepository.SaveChanges();
 

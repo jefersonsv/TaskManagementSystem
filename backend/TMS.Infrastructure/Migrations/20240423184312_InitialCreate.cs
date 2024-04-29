@@ -17,8 +17,8 @@ namespace TMS.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Title = table.Column<string>(type: "nvarchar(256)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(1024)", nullable: true),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Priority = table.Column<int>(type: "int", nullable: true),
                     Status = table.Column<int>(type: "int", nullable: true)

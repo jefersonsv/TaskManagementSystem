@@ -58,9 +58,9 @@ public class TaskController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult> Post([FromBody] Domain.Models.TaskItemCreateRequest taskItemCreateRequest)
+    public async Task<ActionResult> Post([FromBody] TaskItemCreateUpdateRequest taskItemCreateUpdateRequest)
     {
-        var res = await _taskService.CreateTask(taskItemCreateRequest);
+        var res = await _taskService.CreateTask(taskItemCreateUpdateRequest);
         if (res.IsError)
         {
             return BadRequest(res.Errors);
@@ -75,9 +75,9 @@ public class TaskController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult> Put([FromBody] Domain.Models.TaskItemUpdateRequest taskItemCreate, int id)
+    public async Task<ActionResult> Put([FromBody] TaskItemCreateUpdateRequest taskItemCreateUpdateRequest, int id)
     {
-        var res = await _taskService.UpdateTask(taskItemCreate, id);
+        var res = await _taskService.UpdateTask(taskItemCreateUpdateRequest, id);
         if (res.IsError)
         {
             if (res.FirstError.Type == ErrorOr.ErrorType.NotFound)

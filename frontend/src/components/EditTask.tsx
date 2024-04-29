@@ -23,6 +23,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { priorityToString, statusToString } from "@/lib/convert";
 import { cn } from "@/lib/utils";
 import { EPriority } from "@/types/EPriority";
 import { EStatus } from "@/types/EStatus";
@@ -31,8 +32,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { z } from "zod";
 import { FormFieldTitle } from "./FormFieldTitle";
@@ -40,8 +42,8 @@ import PriorityDropdown from "./PriorityDropdown";
 import StatusDropdown from "./StatusDropdown";
 import { Button } from "./ui/button";
 
-export default function NewTask() {
-  const [showConfirm, setShowConfirm] = useState(false);
+export default function EditTask() {
+  const { id } = useParams();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -54,6 +56,33 @@ export default function NewTask() {
   });
 
   type FormType2 = typeof form.control;
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await axios.get(`http://localhost:5234/api/tasks/${id}`);
+
+        const { title, description, date, priority, status } = res.data;
+
+        console.info(EPriority[priority]);
+        form.setValue("title", title);
+        form.setValue("description", description);
+        form.setValue("date", new Date(date));
+        form.setValue("priority", "high");
+        form.setValue(
+          "status",
+          statusToString(EStatus[status] as any) as string
+        );
+      } catch (err: any) {
+        if (err?.response?.data?.status === 404) {
+          toast.error("Task not found");
+          setTimeout(() => (window.location.href = "/"), 1000);
+        }
+      }
+    })();
+  }, []);
+
+  const [showConfirm, setShowConfirm] = useState(false);
 
   async function createTask() {
     const values = form.getValues();
@@ -89,7 +118,7 @@ export default function NewTask() {
   return (
     <>
       <h2 className="scroll-m-20 text-3xl font-extrabold tracking-tight lg:text-4xl mb-4">
-        Create new task
+        Edit task
       </h2>
 
       <div>
@@ -184,7 +213,7 @@ export default function NewTask() {
               )}
             />
 
-            <Button type="submit">Create</Button>
+            <Button type="submit">Edit</Button>
           </form>
         </Form>
       </div>
@@ -194,7 +223,7 @@ export default function NewTask() {
           <AlertDialogHeader>
             <AlertDialogTitle>High Priority Task</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure to create high priority task?
+              Are you sure to set the task as high priority?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
