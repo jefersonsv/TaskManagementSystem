@@ -15,7 +15,7 @@ export default function Progress() {
     fetcher
   );
 
-  if (isLoading) return <div>Loading task progress chart</div>;
+  if (isLoading) return <div className="h-96">Loading task progress chart</div>;
   if (error) return <div>Failed to load task progress chart</div>;
 
   if (data) {
@@ -37,7 +37,7 @@ export default function Progress() {
     };
 
     return (
-      <div className="container w-1/3 my-4">
+      <div className="container w-1/3 my-4 h-96">
         <Pie data={chartData} />
       </div>
     );

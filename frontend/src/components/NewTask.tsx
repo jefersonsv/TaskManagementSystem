@@ -47,7 +47,7 @@ export default function NewTask() {
     if (res.status === 200) {
       toast(`Task number ${res.data} created successfully`);
       setTimeout(
-        () => (window.location.href = "http://localhost:5173/new-task"),
+        () => (window.location.href = "/new-task"),
         1000
       );
     } else {

@@ -1,35 +1,14 @@
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { priorityToString, statusToString } from "@/lib/convert";
-import { EPriority } from "@/types/EPriority";
-import { EStatus } from "@/types/EStatus";
+import { DeleteTask, GetTasks } from "@/lib/api";
 import { IDeleteTask } from "@/types/IDeleteTask";
 import { ITaskItem } from "@/types/ITaskItem";
-import axios from "axios";
-import { format } from "date-fns";
 import { useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { toast } from "sonner";
-import PriorityDropdown from "./PriorityDropdown";
+import FilterPriority from "./FilterPriority";
+import FilterStatus from "./FilterStatus";
+import { PopupDeleteTask } from "./PopupDeleteTask";
 import Progress from "./Progress";
-import StatusDropdown from "./StatusDropdown";
-import { Button } from "./ui/button";
+import TaskCard from "./TaskCard";
 
 export default function ListTasks() {
   const [deleteTask, setDeleteTask] = useState<IDeleteTask | undefined>();
@@ -39,44 +18,20 @@ export default function ListTasks() {
   const [data, setData] = useState<ITaskItem[]>([]);
   const [hasMore, setHasMore] = useState(true);
 
-  // https://localhost:7253
   useEffect(() => {
     fetchMoreData();
-  }, []);
+  }, [status, priority]);
 
   const fetchMoreData = () => {
-    if (hasMore) {
-      axios
-        .get(
-          `/api/tasks?page=${page}&status=${EStatus[status as any]}&priority=${
-            EPriority[priority as any]
-          }`
-        )
-        .then((res) => {
-          if (res.data.length) {
-            setData([...data, ...res.data]);
-            setPage(page + 1);
-          } else {
-            setHasMore(false);
-          }
-        });
-    }
+    GetTasks(page, status, priority).then((res) => {
+      if (res.data.length) {
+        setData([...data, ...res.data]);
+        setPage(page + 1);
+      } else {
+        setHasMore(false);
+      }
+    });
   };
-
-  useEffect(() => {
-    axios
-      .get(
-        `/api/tasks?page=1&status=${EStatus[status as any]}&priority=${
-          EPriority[priority as any]
-        }`
-      )
-      .then((res) => {
-        setData([...res.data]);
-        if (!res.data.length) {
-          setHasMore(false);
-        }
-      });
-  }, [status, priority]);
 
   function handleDelete(item: ITaskItem) {
     setDeleteTask({
@@ -87,7 +42,7 @@ export default function ListTasks() {
   }
 
   function performDelete(del: IDeleteTask) {
-    axios.delete(`/api/tasks/${del.id}`).then((res) => {
+    DeleteTask(del.id).then((res) => {
       if (res.status === 204) {
         toast(`Task ${del.title} deleted`);
         const newData = data.filter((s) => s.id !== del.id);
@@ -102,14 +57,14 @@ export default function ListTasks() {
 
   function handleStatus(status: string) {
     setPage(1);
+    setData([]);
     setStatus(status);
-    setHasMore(true);
   }
 
   function handlePriority(priority: string) {
     setPage(1);
+    setData([]);
     setPriority(priority);
-    setHasMore(true);
   }
 
   return (
@@ -123,14 +78,10 @@ export default function ListTasks() {
       </div>
 
       <div className="flex my-4 space-x-4">
-        <div className="w-1/2 flex items-center space-x-2">
-          <div>Status: </div>
-          <StatusDropdown onChange={handleStatus} firstEmpty={true} />
-        </div>
-        <div className="w-1/2 flex items-center space-x-2">
-          <div>Priority: </div>
-          <PriorityDropdown onChange={handlePriority} />
-        </div>
+        <FilterStatus onChange={(status: string) => handleStatus(status)} />
+        <FilterPriority
+          onChange={(priority: string) => handlePriority(priority)}
+        />
       </div>
 
       <InfiniteScroll
@@ -140,63 +91,16 @@ export default function ListTasks() {
         loader={<h4>Loading tasks...</h4>}
       >
         {data.map((s: ITaskItem) => (
-          <div key={s.id} className="mb-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>{s.title}</CardTitle>
-                <CardDescription>{s.description}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex space-x-2">
-                  <div>Status:</div>
-                  <div>{statusToString(s.status)}</div>
-                </div>
-
-                <div className="flex space-x-2">
-                  <div>Priority:</div>
-                  <div>{priorityToString(s.priority)}</div>
-                </div>
-
-                <div className="flex space-x-2">
-                  <div>Date:</div>
-                  <div>{format(s.date, "dd/MM/yyyy")}</div>
-                </div>
-              </CardContent>
-              <CardFooter>
-                <div className="space-x-2">
-                  <Button
-                    onClick={() =>
-                      (window.location.href = `/edit-task/${s.id}`)
-                    }
-                  >
-                    Edit
-                  </Button>
-                  <Button onClick={() => handleDelete(s)}>Delete</Button>
-                </div>
-              </CardFooter>
-            </Card>
-          </div>
+          <TaskCard taskItem={s} onDelete={handleDelete} />
         ))}
       </InfiniteScroll>
 
-      <AlertDialog open={deleteTask?.showConfirm}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete task</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure to delete the task {deleteTask?.title}?
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setDeleteTask(undefined)}>
-              Cancel
-            </AlertDialogCancel>
-            <AlertDialogAction onClick={() => performDelete(deleteTask!)}>
-              Continue
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <PopupDeleteTask
+        taskTitle={deleteTask?.title || ""}
+        showConfirm={deleteTask?.showConfirm || false}
+        onCancel={() => setDeleteTask(undefined)}
+        onConfirm={() => performDelete(deleteTask!)}
+      />
     </div>
   );
 }

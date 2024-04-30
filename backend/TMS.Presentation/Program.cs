@@ -14,7 +14,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.ConfigureApplicationServices();
 
-builder.Services.ConfigurePresentationServices();
+builder.Services.ConfigurePresentationServices(builder.Configuration);
 
 builder.Services.ConfigureInfrastructureServices(builder.Configuration);
 
@@ -35,7 +35,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.UseCors("default");
+app.UseCors(nameof(CorsSettings));
 
 app.UseMiddleware<RegisterRequestsMiddleware>();
 

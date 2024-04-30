@@ -69,7 +69,7 @@ export default function EditTask() {
     if (res.status === 200) {
       toast(`Task number ${id} updated successfully`);
       setTimeout(
-        () => (window.location.href = `http://localhost:5173/edit-task/${id}`),
+        () => (window.location.href = `/edit-task/${id}`),
         1000
       );
     } else {

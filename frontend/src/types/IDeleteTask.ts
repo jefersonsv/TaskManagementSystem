@@ -1,5 +1,5 @@
 export interface IDeleteTask {
-  id: string;
+  id: number;
   title: string;
   showConfirm: boolean;
 }

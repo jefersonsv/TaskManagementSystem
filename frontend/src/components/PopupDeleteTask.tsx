@@ -10,11 +10,13 @@ import {
 } from "@/components/ui/alert-dialog";
 import { THandlerVoid } from "@/types/THandlerVoid";
 
-export function PopupHighPriority({
+export function PopupDeleteTask({
+  taskTitle,
   showConfirm,
   onCancel,
   onConfirm,
 }: {
+  taskTitle: string;
   showConfirm: boolean;
   onCancel: THandlerVoid;
   onConfirm: THandlerVoid;
@@ -23,9 +25,9 @@ export function PopupHighPriority({
     <AlertDialog open={showConfirm}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>High Priority Task</AlertDialogTitle>
+          <AlertDialogTitle>Delete task</AlertDialogTitle>
           <AlertDialogDescription>
-            This task is set to High Priority. Continue?
+            Are you sure to delete the task {taskTitle}?
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

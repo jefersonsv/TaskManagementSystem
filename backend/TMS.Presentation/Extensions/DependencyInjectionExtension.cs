@@ -4,20 +4,24 @@ namespace TMS.Presentation.Extensions
 {
     public static class DependencyInjectionExtension
     {
-        public static void ConfigurePresentationServices(this IServiceCollection services)
+        public static void ConfigurePresentationServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddControllers(opt => opt.Filters.Add<UnexpectedErrorFilter>());
-            services.AddCors(options =>
+
+            var corsSettings = configuration.GetSection(nameof(CorsSettings)).Get<CorsSettings>();
+            if (corsSettings != null)
             {
-                options.AddPolicy("default",
-                    builder =>
-                    {
-                        builder
-                            .WithOrigins("http://localhost:5173")
-                            .AllowAnyMethod()
-                            .AllowAnyHeader();
-                    });
-            });
+                services.AddCors(options =>
+                {
+                    options.AddPolicy(nameof(CorsSettings),
+                        builder =>
+                        {
+                            builder.WithOrigins(corsSettings.AllowedOrigins.ToArray())
+                                   .WithHeaders(corsSettings.AllowedHeaders.ToArray())
+                                   .WithMethods(corsSettings.AllowedMethods.ToArray());
+                        });
+                });
+            }
         }
     }
 }
