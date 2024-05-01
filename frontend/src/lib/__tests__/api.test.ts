@@ -1,15 +1,13 @@
 import { GetTasks } from "../api";
+import { expect, test,vi } from 'vitest'
 
-jest.mock("@/types/Constants", () => ({
+vi.mock("@/types/Constants", () => ({
   API_ENDPOINT: "http://localhost",
 }));
 
-test("Test API GetTasks", async () => {
-  const aa = await GetTasks("token", 1, "Archived", "Low");
+test("API offline return no success", async () => {
+  const res = await GetTasks("token", 1, "Archived", "Low");
 
-  // expect(statusToString(1)).toBe(EStatus[EStatus.Pending]);
-  // expect(statusToString(2)).toBe(EStatus[EStatus["In Progress"]]);
-  // expect(statusToString(3)).toBe(EStatus[EStatus.Completed]);
-  // expect(statusToString(4)).toBe(EStatus[EStatus.Archived]);
-  expect(aa).toBe(undefined);
+  expect(res.success).toBe(false);
+  expect(res.message).toBe("Error loading tasks");
 });
