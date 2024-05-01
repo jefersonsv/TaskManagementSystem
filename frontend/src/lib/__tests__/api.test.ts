@@ -5,7 +5,7 @@ vi.mock("@/types/Constants", () => ({
   API_ENDPOINT: "http://localhost",
 }));
 
-test("API offline return no success", async () => {
+test("API offline return error", async () => {
   const res = await GetTasks("token", 1, "Archived", "Low");
 
   expect(res.success).toBe(false);

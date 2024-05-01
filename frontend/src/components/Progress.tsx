@@ -17,6 +17,7 @@ export default function Progress() {
   useEffect(() => {
     (async () => {
       const res = await GetProgress(authState.token);
+
       if (res.success) {
         setData(res.data);
       } else {

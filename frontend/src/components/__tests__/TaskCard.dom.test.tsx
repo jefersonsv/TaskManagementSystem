@@ -5,11 +5,11 @@ import { EPriority } from '../../types/EPriority'
 import { EStatus } from '../../types/EStatus'
 import { ITaskItem } from '../../types/ITaskItem'
 
-test('Link changes the state when hovered', async () => {
+test('Render task card', async () => {
   const taskItem = {
     id: 1,
-    title: "title",
-    description: "description",
+    title: "my title",
+    description: "my description",
     date: new Date(2024,0,1),
     priority: EPriority.Low,
     status: EStatus.Completed
@@ -19,10 +19,19 @@ test('Link changes the state when hovered', async () => {
     <TaskCard taskItem={taskItem} onDelete={() => {}} />
   )
 
-  const link = screen.debug();
+  const title = screen.getByRole('heading', {
+    name: /title/i
+  })
+  const description = screen.getByText(/description/i);
+  const date = screen.getByText(/01\/01\/2024/i);
+  const priority = screen.getByText(/low/i);
+  const status = screen.getByText(/completed/i);
 
-  console.info(link)
-  expect(link).toBe(true)
+  expect(description).toBeVisible();
+  expect(date).toBeVisible();
+  expect(priority).toBeVisible();
+  expect(status).toBeVisible();
+  expect(title).toBeVisible();
 })
 
 

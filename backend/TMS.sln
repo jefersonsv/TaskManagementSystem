@@ -3,21 +3,22 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TMS.Application", "TMS.Application\TMS.Application.csproj", "{79EEDA22-A73A-462A-B38E-4D6D32227E14}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TMS.Application", "TMS.Application\TMS.Application.csproj", "{79EEDA22-A73A-462A-B38E-4D6D32227E14}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TMS.Infrastructure", "TMS.Infrastructure\TMS.Infrastructure.csproj", "{015A84FF-5264-46AA-AE42-8E45F7121D42}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TMS.Infrastructure", "TMS.Infrastructure\TMS.Infrastructure.csproj", "{015A84FF-5264-46AA-AE42-8E45F7121D42}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TMS.Presentation", "TMS.Presentation\TMS.Presentation.csproj", "{F1288A24-DA05-4581-852B-C1DFDE69E46D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TMS.Presentation", "TMS.Presentation\TMS.Presentation.csproj", "{F1288A24-DA05-4581-852B-C1DFDE69E46D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TMS.Domain", "TMS.Domain\TMS.Domain.csproj", "{CAA5F315-93E0-4F95-880C-956FA392439C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TMS.Domain", "TMS.Domain\TMS.Domain.csproj", "{CAA5F315-93E0-4F95-880C-956FA392439C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{1EB41C4F-D512-4B83-B6ED-C63CB83D1001}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TMS.Application.Tests", "tests\TMS.Application.Tests\TMS.Application.Tests.csproj", "{A69DA5B5-8863-4671-9F0B-145BA34532D9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{79EEDA22-A73A-462A-B38E-4D6D32227E14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -36,5 +37,15 @@ Global
 		{CAA5F315-93E0-4F95-880C-956FA392439C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CAA5F315-93E0-4F95-880C-956FA392439C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CAA5F315-93E0-4F95-880C-956FA392439C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A69DA5B5-8863-4671-9F0B-145BA34532D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A69DA5B5-8863-4671-9F0B-145BA34532D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A69DA5B5-8863-4671-9F0B-145BA34532D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A69DA5B5-8863-4671-9F0B-145BA34532D9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A69DA5B5-8863-4671-9F0B-145BA34532D9} = {1EB41C4F-D512-4B83-B6ED-C63CB83D1001}
 	EndGlobalSection
 EndGlobal
