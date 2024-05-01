@@ -104,6 +104,8 @@ dotnet add .\TMS.Infrastructure\TMS.Infrastructure.csproj package Microsoft.Exte
 
 ```sh
 dotnet add .\TMS.Presentation\TMS.Presentation.csproj package Microsoft.EntityFrameworkCore.Design
+dotnet add .\TMS.Presentation\TMS.Presentation.csproj package System.IdentityModel.Tokens.Jwt
+dotnet add .\TMS.Presentation\TMS.Presentation.csproj package Microsoft.AspNetCore.Authentication.JwtBearer
 ```
 
 ### Install application references

@@ -1,5 +1,4 @@
-﻿using System;
-using TMS.Domain.Entities;
+﻿using TMS.Domain.Entities;
 
 namespace TMS.Domain.Models
 {

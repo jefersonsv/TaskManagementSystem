@@ -1,30 +1,39 @@
+import { GetProgress } from "@/lib/api";
 import { statusToString } from "@/lib/convert";
-import { TaskProgress } from "@/types/ITaskProgress";
-import axios, { AxiosError } from "axios";
+import { useAuthStore } from "@/stores/useAuthStore";
+import { IAPIResponse } from "@/types/IAPIResponse";
+import { ITaskProgress } from "@/types/ITaskProgress";
 import { ArcElement, Chart as ChartJS, Legend, Tooltip } from "chart.js";
+import { useEffect, useState } from "react";
 import { Pie } from "react-chartjs-2";
-import useSWR from "swr";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const fetcher = (url: string) => axios.get<any>(url).then((res) => res.data);
-
 export default function Progress() {
-  const { data, error, isLoading } = useSWR<TaskProgress[], AxiosError>(
-    `/api/tasks/progress`,
-    fetcher
-  );
+  const authState = useAuthStore.getState();
+  const [data, setData] = useState<ITaskProgress[]>([]);
+  const [error, setError] = useState<IAPIResponse>();
 
-  if (isLoading) return <div className="h-96">Loading task progress chart</div>;
-  if (error) return <div>Failed to load task progress chart</div>;
+  useEffect(() => {
+    (async () => {
+      const res = await GetProgress(authState.token);
+      if (res.success) {
+        setData(res.data);
+      } else {
+        setError(res);
+      }
+    })();
+  }, []);
 
-  if (data) {
+  if (error) return <div>{error.message}</div>;
+
+  if (data.length) {
     const chartData = {
-      labels: data.map((s: TaskProgress) => statusToString(s.status)),
+      labels: data.map((s: ITaskProgress) => statusToString(s.status)),
       datasets: [
         {
           label: "Progress in percent",
-          data: data.map((s: TaskProgress) => s.percentage.toFixed(2)),
+          data: data.map((s: ITaskProgress) => s.percentage.toFixed(2)),
           backgroundColor: [
             "rgba(255, 99, 132, 0.2)",
             "rgba(54, 162, 235, 0.2)",

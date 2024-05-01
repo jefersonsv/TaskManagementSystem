@@ -1,9 +1,11 @@
 import { Form } from "@/components/ui/form";
+import { GetTask, UpdateTask } from "@/lib/api";
+import { go } from "@/lib/url";
+import { useAuthStore } from "@/stores/useAuthStore";
 import { EPriority } from "@/types/EPriority";
 import { EStatus } from "@/types/EStatus";
 import { formSchema } from "@/types/FormSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -20,32 +22,26 @@ import { Button } from "./ui/button";
 
 export default function EditTask() {
   const { id } = useParams();
+  const token = useAuthStore((state) => state.token);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      title: "",
-      description: "",
-      priority: "",
-      status: "",
-    },
   });
 
   useEffect(() => {
     (async () => {
-      try {
-        const res = await axios.get(`/api/tasks/${id}`);
+      const res = await GetTask(token, parseInt(id!));
+
+      if (res.success) {
         const { title, description, date, priority, status } = res.data;
         form.setValue("title", title);
         form.setValue("description", description);
         form.setValue("date", new Date(date));
         form.setValue("priority", EPriority[priority]);
         form.setValue("status", EStatus[status]);
-      } catch (err: any) {
-        if (err?.response?.data?.status === 404) {
-          toast.error("Task not found");
-          setTimeout(() => (window.location.href = "/"), 1000);
-        }
+      } else {
+        toast.error(res.message);
+        go("/");
       }
     })();
   }, []);
@@ -62,16 +58,10 @@ export default function EditTask() {
       status: parseInt(EStatus[values.status as any]),
     };
 
-    const res = await axios.put(`/api/tasks/${id}`, {
-      ...obj,
-    });
-
-    if (res.status === 200) {
+    const res = await UpdateTask(token, parseInt(id!), obj);
+    if (res.success) {
       toast(`Task number ${id} updated successfully`);
-      setTimeout(
-        () => (window.location.href = `/edit-task/${id}`),
-        1000
-      );
+      go("/list-tasks");
     } else {
       toast.error("An error occurred while creating the task");
     }
@@ -94,7 +84,7 @@ export default function EditTask() {
       <div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <FormFieldTitle control={form.control} />
+            <FormFieldTitle control={form.control} autoFocus={true} />
 
             <FormFieldDescription control={form.control} />
 

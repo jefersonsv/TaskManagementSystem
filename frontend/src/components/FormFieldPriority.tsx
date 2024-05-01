@@ -13,7 +13,6 @@ export function FormFieldPriority({ control }: { control: TFormControl }) {
       control={control}
       name="priority"
       render={({ field }) => {
-        console.info(field);
         return (
           <FormItem>
             <FormLabel>Priority</FormLabel>

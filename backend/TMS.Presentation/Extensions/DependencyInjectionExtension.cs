@@ -1,4 +1,8 @@
-﻿using TMS.Presentation.Filters;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
+using Microsoft.IdentityModel.Tokens;
+using TMS.Presentation.Filters;
 
 namespace TMS.Presentation.Extensions
 {
@@ -13,7 +17,7 @@ namespace TMS.Presentation.Extensions
             {
                 services.AddCors(options =>
                 {
-                    options.AddPolicy(nameof(CorsSettings),
+                    options.AddDefaultPolicy(
                         builder =>
                         {
                             builder.WithOrigins(corsSettings.AllowedOrigins.ToArray())
@@ -22,6 +26,39 @@ namespace TMS.Presentation.Extensions
                         });
                 });
             }
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    var securitySettings = configuration.GetSection(nameof(SecuritySettings)).Get<SecuritySettings>();
+                    if (securitySettings == null)
+                        throw new Exception(Constants.Messages.NoSecuritySettingsFound);
+
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = securitySettings.Issuer,
+                        ValidAudience = securitySettings.Audience,
+                        IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(securitySettings.SecretKey))
+                    };
+                });
+
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy(nameof(DenyAnonymousAuthorizationRequirement), policy =>
+                {
+                    policy.Requirements.Add(new DenyAnonymousAuthorizationRequirement());
+                });
+
+
+                options.FallbackPolicy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();
+            });
         }
     }
 }

@@ -1,4 +1,5 @@
 import { DeleteTask, GetTasks } from "@/lib/api";
+import { useAuthStore } from "@/stores/useAuthStore";
 import { IDeleteTask } from "@/types/IDeleteTask";
 import { ITaskItem } from "@/types/ITaskItem";
 import { useEffect, useState } from "react";
@@ -17,13 +18,14 @@ export default function ListTasks() {
   const [priority, setPriority] = useState<string>("");
   const [data, setData] = useState<ITaskItem[]>([]);
   const [hasMore, setHasMore] = useState(true);
+  const authState = useAuthStore.getState();
 
   useEffect(() => {
     fetchMoreData();
   }, [status, priority]);
 
   const fetchMoreData = () => {
-    GetTasks(page, status, priority).then((res) => {
+    GetTasks(authState.token, page, status, priority).then((res) => {
       if (res.data.length) {
         setData([...data, ...res.data]);
         setPage(page + 1);
@@ -42,8 +44,8 @@ export default function ListTasks() {
   }
 
   function performDelete(del: IDeleteTask) {
-    DeleteTask(del.id).then((res) => {
-      if (res.status === 204) {
+    DeleteTask(authState.token, del.id).then((res) => {
+      if (res.success) {
         toast(`Task ${del.title} deleted`);
         const newData = data.filter((s) => s.id !== del.id);
         setData(newData);

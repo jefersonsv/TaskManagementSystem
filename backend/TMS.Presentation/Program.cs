@@ -3,7 +3,6 @@ using TMS.Infrastructure;
 using TMS.Presentation.Middlewares;
 using TMS.Presentation.Extensions;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Learn more about configuring Sw
@@ -20,6 +19,7 @@ builder.Services.ConfigureInfrastructureServices(builder.Configuration);
 
 builder.Logging.ConfigureLogs(builder.Configuration);
 
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -31,11 +31,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
-
 app.MapControllers();
 
-app.UseCors(nameof(CorsSettings));
+app.UseCors();
+
+app.UseAuthorization();
 
 app.UseMiddleware<RegisterRequestsMiddleware>();
 

@@ -1,6 +1,6 @@
 import { EStatus } from "./EStatus";
 
-export interface TaskProgress {
+export interface ITaskProgress {
   status: EStatus;
   percentage: number;
 }
