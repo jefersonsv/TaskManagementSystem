@@ -1,6 +1,6 @@
 # Task Management System
 
-Consistes on endpoints and UI to manage simples tasks
+Consists on endpoints and UI to manage simple tasks
 
 ## Pre requirements
 
@@ -8,8 +8,8 @@ Consistes on endpoints and UI to manage simples tasks
 2. Nodejs 20.11.1
 3. PNPM - Package Manager
 
-All commands describled in this document section must be executed from the root folder (aka: the folder of this document).
-However the cd <backend/frontend> can be omitted if you already are inside the related folder
+All commands described in this document section must be executed from the root folder (aka: the folder of this document).
+However, the cd <backend/frontend> can be omitted if you are inside the related folder
 
 ## Install the dependencies
 
@@ -49,9 +49,9 @@ http://localhost:5234
 Notes:
 
 1. You can use the profile "https" to start the server on SSL protocol
-2. The swagger ui is available to use on development mode. Access that at: http://localhost:5234/swagger/
-3. Currentilly the cors settings allows requestes from the origin http://localhost:4173. Make sure if you have different host
-
+2. The swagger ui is available to use in development mode. Access that at: http://localhost:5234/swagger/
+3. Currently the cors settings allow requests from the origin http://localhost:4173. Make sure you have the same host
+   
 ### Run frontend in development
 
 Use the pnpm to run
@@ -64,4 +64,4 @@ pnpm run preview
 It will start the server at:
 http://localhost:4173
 
-Note: Currentlly there is an environment VITE_API_ENDPOINT variable file at ".env" configuring the API endpoints to http://localhost:5234. Make sure if you have different ports or protocol update that variable accordilly.
+Note: Currently there is an environment VITE_API_ENDPOINT variable file at ".env" configuring the API endpoints to http://localhost:5234. Make sure if you have different ports or protocol, update that variable accordingly.
