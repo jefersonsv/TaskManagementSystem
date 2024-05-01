@@ -5,7 +5,7 @@ import { persist } from "zustand/middleware";
 
 export const useTaskStore = create<IStore>()(
   persist<IStore>(
-    (set, get) => ({
+    (set) => ({
       _hasHydrated: false,
 
       setHasHydrated: (state: boolean) => {
@@ -29,7 +29,6 @@ export const useTaskStore = create<IStore>()(
       popup: null,
 
       showPopup: (popup: IPopup) => {
-        popup.show = true;
         set({ popup });
       },
 

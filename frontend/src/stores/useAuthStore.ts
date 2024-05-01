@@ -3,7 +3,7 @@ import { persist } from "zustand/middleware";
 
 export const useAuthStore = create<IAuthStore>()(
   persist<IAuthStore>(
-    (set, get) => ({
+    (set) => ({
       token: "",
 
       setToken: (token: string) => {
