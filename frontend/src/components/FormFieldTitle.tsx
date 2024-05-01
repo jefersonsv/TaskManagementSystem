@@ -28,8 +28,8 @@ const FormFieldTitle = forwardRef(
               <Input
                 placeholder="Type the title"
                 autoFocus={props.autoFocus}
-                ref={ref}
                 {...field}
+                ref={ref}
               />
             </FormControl>
             <FormMessage />

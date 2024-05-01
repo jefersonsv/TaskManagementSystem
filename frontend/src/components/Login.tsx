@@ -41,6 +41,7 @@ export default function Login() {
       toast.message("Login Successfully");
       go("/");
     } else {
+
       showPopup({
         title: "Error",
         message: res.message!,
@@ -51,10 +52,14 @@ export default function Login() {
   return (
     <>
       <h2 className="scroll-m-20 text-3xl font-extrabold tracking-tight lg:text-4xl mb-4">
-        Edit task
+        Login
       </h2>
 
-      <div>
+      <p>Demo:</p>
+      <p>user: admin</p>
+      <p>pass: admin</p>
+
+      <div className="mt-4">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField
@@ -64,7 +69,7 @@ export default function Login() {
                 <FormItem>
                   <FormLabel>Username</FormLabel>
                   <FormControl>
-                    <Input placeholder="" {...field} autoFocus={true} />
+                    <Input placeholder="admin" {...field} autoFocus={true} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -78,7 +83,7 @@ export default function Login() {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="" {...field} />
+                    <Input type="password" placeholder="admin" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

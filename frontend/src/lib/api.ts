@@ -1,10 +1,11 @@
+import { API_ENDPOINT } from "@/types/Constants";
 import { EPriority } from "@/types/EPriority";
 import { EStatus } from "@/types/EStatus";
 import { IAPIResponse } from "@/types/IAPIResponse";
 import axios from "axios";
 import qs from "qs";
 
-axios.defaults.baseURL = import.meta.env.VITE_API_ENDPOINT;
+axios.defaults.baseURL = API_ENDPOINT;
 
 export async function GetTasks(
   token: string,
@@ -17,6 +18,7 @@ export async function GetTasks(
     status: status ? EStatus[status as any] : undefined,
     priority: priority ? EPriority[priority as any] : undefined,
   };
+  
   const querystring = qs.stringify(params);
 
   const headers = {
@@ -199,12 +201,12 @@ export async function GetToken(
   username: string,
   password: string
 ): Promise<IAPIResponse> {
-  try {
-    const obj = {
-      username,
-      password,
-    };
+  const obj = {
+    username,
+    password,
+  };
 
+  try {
     const res = await axios.post(`/api/user/token`, {
       ...obj,
     });
@@ -224,7 +226,7 @@ export async function GetToken(
     return {
       success: false,
       message:
-        err.response.status === 401
+        err?.response?.status === 401
           ? "Invalid Login Credentials"
           : "Failure on authentication",
     };
