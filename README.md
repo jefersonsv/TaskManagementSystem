@@ -58,6 +58,8 @@ Use the pnpm to run
 
 ```
 cd frontend
+pnpm i
+pnpm run build
 pnpm run preview
 ```
 
