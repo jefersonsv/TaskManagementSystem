@@ -59,7 +59,7 @@ namespace TMS.Infrastructure.Repository
             if (taskItemListRequest.Priority.HasValue)
                 query = query.Where(w => w.Priority == taskItemListRequest.Priority.Value);
 
-            return await query.Skip(skip).Take(taskItemListRequest.PageSize).ToArrayAsync();
+            return await query.OrderBy(o => o.Id).Skip(skip).Take(taskItemListRequest.PageSize).ToArrayAsync();
         }
 
         public async Task<TaskItem?> GetById(int id)

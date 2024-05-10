@@ -19,6 +19,7 @@ export default function ListTasks() {
   const [data, setData] = useState<ITaskItem[]>([]);
   const [hasMore, setHasMore] = useState(true);
   const authState = useAuthStore.getState();
+  const [error, setError] = useState("");
 
   useEffect(() => {
     fetchMoreData();
@@ -26,11 +27,16 @@ export default function ListTasks() {
 
   const fetchMoreData = () => {
     GetTasks(authState.token, page, status, priority).then((res) => {
-      if (res.data.length) {
-        setData([...data, ...res.data]);
-        setPage(page + 1);
+      if (!res.success) {
+        setError(res.message || "");
       } else {
-        setHasMore(false);
+        setError("");
+        if (res.data.length) {
+          setData([...data, ...res.data]);
+          setPage(page + 1);
+        } else {
+          setHasMore(false);
+        }
       }
     });
   };
@@ -86,16 +92,20 @@ export default function ListTasks() {
         />
       </div>
 
-      <InfiniteScroll
-        dataLength={data.length}
-        next={fetchMoreData}
-        hasMore={hasMore}
-        loader={<h4>Loading tasks...</h4>}
-      >
-        {data.map((s: ITaskItem) => (
-          <TaskCard taskItem={s} onDelete={handleDelete} />
-        ))}
-      </InfiniteScroll>
+      {!error && (
+        <InfiniteScroll
+          dataLength={data.length}
+          next={fetchMoreData}
+          hasMore={hasMore}
+          loader={<></>}
+        >
+          {data.map((s: ITaskItem) => (
+            <TaskCard key={s.id} taskItem={s} onDelete={handleDelete} />
+          ))}
+        </InfiniteScroll>
+      )}
+
+      {error && <div>{error}</div>}
 
       <PopupDeleteTask
         taskTitle={deleteTask?.title || ""}

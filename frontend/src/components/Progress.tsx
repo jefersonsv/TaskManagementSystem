@@ -47,7 +47,7 @@ export default function Progress() {
     };
 
     return (
-      <div className="container w-1/3 my-4 h-96">
+      <div className="container flex justify-center my-4 h-96">
         <Pie data={chartData} />
       </div>
     );
