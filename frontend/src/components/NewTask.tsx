@@ -17,6 +17,7 @@ import { FormFieldStatus } from "./FormFieldStatus";
 import { FormFieldTitle } from "./FormFieldTitle";
 import { PopupHighPriority } from "./PopupHighPriority";
 import { Button } from "./ui/button";
+import { go } from "@/lib/url";
 
 export default function NewTask() {
   const [showConfirm, setShowConfirm] = useState(false);
@@ -46,7 +47,7 @@ export default function NewTask() {
 
     if (res.success) {
       toast.message(`Task number ${res.data} created successfully`);
-      window.location.href = "/new-task";
+      go("/new-task")
     } else {
       toast.error("An error occurred while creating the task");
     }
